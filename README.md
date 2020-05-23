@@ -1,2 +1,2 @@
 # Blossom
-An implementation of the blossom algorithm for constructing maximum matchings on graphs.
+An implementation of the [blossom algorithm](https://en.wikipedia.org/wiki/Blossom_algorithm) for constructing maximum matchings on graphs.
