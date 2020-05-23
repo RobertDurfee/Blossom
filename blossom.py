@@ -157,7 +157,7 @@ class Graph:
 
     def contract(self, blossom):
         graph = self.copy()
-        graph.__assert_vertice_does_not_exist(blossom.get_id)
+        graph.__assert_vertice_does_not_exist(blossom.get_id())
         graph.adjacency[blossom.get_id()] = set()
         for t in blossom.get_vertices():
             graph.__assert_vertice_exists(t)
