@@ -1,3 +1,45 @@
+def get_maximum_matching(graph, matching):
+    augmenting_path = get_augmenting_path(graph, matching)
+    if len(augmenting_path) > 0:
+        return get_maximum_matching(graph, matching.augment(augmenting_path))
+    else:
+        return matching
+
+def get_augmenting_path(graph, matching):
+    forest = Forest()
+    graph.unmark_all_edges()
+    graph.mark_edges(matching.get_edges())
+    for exposed_vertice in matching.get_exposed_vertices():
+        forest.add_singleton_tree(exposed_vertice)
+    v = forest.get_unmarked_even_vertice()
+    while v is not None:
+        e = graph.get_unmarked_neighboring_edge(v)
+        while e is not None:
+            _, w = e
+            if not forest.does_contain_vertice(w):
+                x = matching.get_matched_vertice(w)
+                forest.add_edge((v, w))
+                forest.add_edge((w, x))
+            else:
+                if forest.get_distance_to_root(w) % 2 != 0:
+                    pass
+                else:
+                    if forest.get_root(v) != forest.get_root(w):
+                        path = forest.get_path_from_root_to(v) + forest.get_path_to_root_from(w)
+                        return path
+                    else:
+                        blossom = forest.get_blossom(v, w)
+                        graph_prime = graph.contract(blossom)
+                        matching_prime = matching.contract(blossom)
+                        path_prime = get_augmenting_path(graph_prime, matching_prime)
+                        path = graph.lift_path(path_prime, blossom)
+                        return path
+            graph.mark_edge(e)
+            e = graph.get_unmarked_neighboring_edge(v)
+        forest.mark_vertice(v)
+        v = forest.get_unmarked_even_vertice()
+    return []
+
 class Graph:
 
     def __init__(self):
@@ -563,46 +605,4 @@ class Blossom:
         self.__assert_representation()
         for vertice in reversed(self.vertices[1:] + self.vertices[:1]):
             yield vertice
-
-def get_augmenting_path(graph, matching):
-    forest = Forest()
-    graph.unmark_all_edges()
-    graph.mark_edges(matching.get_edges())
-    for exposed_vertice in matching.get_exposed_vertices():
-        forest.add_singleton_tree(exposed_vertice)
-    v = forest.get_unmarked_even_vertice()
-    while v is not None:
-        e = graph.get_unmarked_neighboring_edge(v)
-        while e is not None:
-            _, w = e
-            if not forest.does_contain_vertice(w):
-                x = matching.get_matched_vertice(w)
-                forest.add_edge((v, w))
-                forest.add_edge((w, x))
-            else:
-                if forest.get_distance_to_root(w) % 2 != 0:
-                    pass
-                else:
-                    if forest.get_root(v) != forest.get_root(w):
-                        path = forest.get_path_from_root_to(v) + forest.get_path_to_root_from(w)
-                        return path
-                    else:
-                        blossom = forest.get_blossom(v, w)
-                        graph_prime = graph.contract(blossom)
-                        matching_prime = matching.contract(blossom)
-                        path_prime = get_augmenting_path(graph_prime, matching_prime)
-                        path = graph.lift_path(path_prime, blossom)
-                        return path
-            graph.mark_edge(e)
-            e = graph.get_unmarked_neighboring_edge(v)
-        forest.mark_vertice(v)
-        v = forest.get_unmarked_even_vertice()
-    return []
-
-def get_maximum_matching(graph, matching):
-    augmenting_path = get_augmenting_path(graph, matching)
-    if len(augmenting_path) > 0:
-        return get_maximum_matching(graph, matching.augment(augmenting_path))
-    else:
-        return matching
 
