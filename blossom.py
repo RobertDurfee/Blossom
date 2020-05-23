@@ -1,3 +1,4 @@
+# https://en.wikipedia.org/wiki/Blossom_algorithm
 def get_maximum_matching(graph, matching):
     augmenting_path = get_augmenting_path(graph, matching)
     if len(augmenting_path) > 0:
@@ -5,6 +6,7 @@ def get_maximum_matching(graph, matching):
     else:
         return matching
 
+# https://en.wikipedia.org/wiki/Blossom_algorithm
 def get_augmenting_path(graph, matching):
     forest = Forest()
     graph.unmark_all_edges()
